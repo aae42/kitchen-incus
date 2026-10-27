@@ -1,0 +1,36 @@
+# Integration test / example for kitchen-incus.
+# Run from test/kitchen with: RUBYLIB=../../lib kitchen test
+driver:
+  name: incus
+  # remote: myremote      # defaults to the incus client's default remote
+  # project: default
+
+transport:
+  name: incus
+
+provisioner:
+  name: cinc_infra        # installs Cinc Client (kitchen-cinc)
+  product_name: cinc
+
+verifier:
+  name: inspec
+
+platforms:
+  - name: debian-12
+  - name: ubuntu-24.04
+  - name: rockylinux-9
+  - name: ubuntu-24.04-vm
+    driver:
+      image: images:ubuntu/24.04
+      vm: true
+      config:
+        limits.cpu: 2
+        limits.memory: 2GiB
+
+suites:
+  - name: default
+    run_list:
+      - recipe[kitchen_incus_test::default]
+    verifier:
+      inspec_tests:
+        - test/integration/default
